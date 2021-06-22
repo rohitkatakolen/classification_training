@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import csv
 
 import torch
 import torch.nn as nn
@@ -28,6 +29,13 @@ class ImageClassificationTrain:
 		tr_losses = []
 		avg_epoch_tr_loss = []
 		tr_accuracy = []
+
+		# change made
+		header = ['epoch', 'train_accuracy', 'val_accuracy', 'epoch_training_loss'] 
+		with open('metrics.csv', 'w', newline='') as csv_file:
+			writer = csv.writer(csv_file)
+			writer.writerow(header)
+		# change made
 		
 		for epoch in range(self.EPOCHS):
 			self.model.train()
@@ -64,6 +72,12 @@ class ImageClassificationTrain:
 
 			# Store the avg epoch loss for plotting
 			avg_epoch_tr_loss.append(torch.tensor(tr_losses).mean())
+
+			# change made
+			with open('metrics.csv', 'a', newline='') as csv_file:
+				writer = csv.writer(csv_file)
+				writer.writerow([epoch + 1, float(torch.tensor(tr_accuracy).mean()), float(torch.tensor(val_accuracy).mean()), float(torch.tensor(tr_losses).mean())])
+			# change made
 
 		torch.save(self.model, self.FINAL_MODEL_PATH)
 

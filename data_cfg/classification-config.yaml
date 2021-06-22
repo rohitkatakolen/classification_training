@@ -3,8 +3,8 @@ model_path : 'classification/models/'
 interim_model_name : 'interim_model.pt'
 final_model_name : 'resnet34_half.pt'
 train_val_split : 0.7
-epochs: 40
-batch_size: 16
+epochs: 2 #40
+batch_size: 4 #16
 learning_rate: 0.001
 momentum: 0.9
 

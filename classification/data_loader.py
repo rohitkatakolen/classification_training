@@ -3,6 +3,7 @@ import torch
 from torchvision import *
 from torch.utils.data.dataloader import DataLoader
 
+import csv
 
 
 class ImageClassificationDataLoader:
@@ -22,20 +23,34 @@ class ImageClassificationDataLoader:
 			print("Train folder not found")
 			return
 		else:
-		    classes_counts = {}
+		    train_classes_counts = {}
 		    for classes in os.listdir(self.TRAIN_DIR):
 		        counts = len(os.listdir(os.path.join(self.TRAIN_DIR, classes)))
-		        classes_counts[classes] =counts
-		    print("Training data: \n",classes_counts,'\n')
+		        train_classes_counts[classes] =counts
+		    print("Training data: \n", train_classes_counts,'\n')
 
 		if not(os.path.exists(self.TEST_DIR)):
 		    print("Test/Validation folder not found")
 		else:
-		    classes_counts = {}
+		    test_classes_counts = {}
 		    for classes in os.listdir(self.TEST_DIR):
 		        counts = len(os.listdir(os.path.join(self.TEST_DIR, classes)))
-		        classes_counts[classes] =counts
-		    print("Test data: \n",classes_counts,"\n")
+		        test_classes_counts[classes] =counts
+		    print("Test data: \n", test_classes_counts,"\n")
+
+		# change made
+		with open('dataset.csv', 'w', newline='') as csv_file:
+			writer = csv.DictWriter(csv_file, fieldnames = [f'train_{cls}' for cls in train_classes_counts] + [f'test_{cls}' for cls in test_classes_counts])
+			writer.writeheader()
+
+			train_data = {f'train_{cls}' : train_classes_counts[cls] for cls in train_classes_counts}
+			test_data = {f'test_{cls}' : test_classes_counts[cls] for cls in test_classes_counts}
+			train_data.update(test_data)
+			
+			writer.writerow(train_data)
+		# change made
+
+
 
 		classes = os.listdir(self.TRAIN_DIR)
 		classes = {k:v for k , v in enumerate(sorted(classes))}
