@@ -1,0 +1,2 @@
+classes,train_set,test_set
+"['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']","[5, 3, 5, 5, 5, 5]","[5, 5, 4, 5, 5, 5]"

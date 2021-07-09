@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 import argparse
+import csv
 
 import torch
 
@@ -46,6 +47,18 @@ def train(args):
     CLASSIFIER_LAYER_SIZE = config_data['classifier_layer_size']
     CLASSIFIER_LAYER_DROPOUT_PROB = config_data['classifier_layer_dropout_prob']
     TRAIN_VAL_SPLIT = config_data['train_val_split']
+
+    # change made
+    with open('hyperparameters.csv', 'w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames = ['train_val_split', 'epochs', 'batch_size', 'learning_rate', 'momentum'])
+        writer.writeheader()
+        writer.writerow({
+            'train_val_split': TRAIN_VAL_SPLIT, 
+            'epochs' : EPOCHS, 
+            'batch_size' : BATCH_SIZE, 
+            'learning_rate' : LEARNING_RATE, 
+            'momentum' : MOMENTUM})
+    # change made
 
     if(USE_GPU):
         if(torch.cuda.is_available()):
