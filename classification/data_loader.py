@@ -7,6 +7,8 @@ import csv
 
 
 class ImageClassificationDataLoader:
+	num_classes = 0
+
 	def __init__(self, TRAIN_DIR, TEST_DIR, BATCH_SIZE, train_transforms, val_transforms, test_transforms, TRAIN_VAL_SPLIT):
 		self.TRAIN_DIR = TRAIN_DIR
 		self.TEST_DIR = TEST_DIR
@@ -38,24 +40,41 @@ class ImageClassificationDataLoader:
 		        test_classes_counts[classes] =counts
 		    print("Test data: \n", test_classes_counts,"\n")
 
-		# change made
-		with open('dataset.csv', 'w', newline='') as csv_file:
-			writer = csv.DictWriter(csv_file, fieldnames = [f'train_{cls}' for cls in train_classes_counts] + [f'test_{cls}' for cls in test_classes_counts])
-			writer.writeheader()
-
-			train_data = {f'train_{cls}' : train_classes_counts[cls] for cls in train_classes_counts}
-			test_data = {f'test_{cls}' : test_classes_counts[cls] for cls in test_classes_counts}
-			train_data.update(test_data)
-			
-			writer.writerow(train_data)
-		# change made
-
-
 
 		classes = os.listdir(self.TRAIN_DIR)
 		classes = {k:v for k , v in enumerate(sorted(classes))}
 
 		self.NUM_CLASSES = len(classes)
+
+		ImageClassificationDataLoader.num_classes = len(classes) # change made
+
+		# change made
+		with open('dataset.csv', 'w', newline='') as csv_file:
+			writer = csv.DictWriter(csv_file, fieldnames = ['classes', 'train_set', 'test_set'])
+			writer.writeheader()
+
+			classes_list = [None]*len(classes)
+			train_set_list = [0]*len(classes)
+			test_set_list = [0]*len(classes)
+
+			for i in classes:
+				classes_list[i] = classes[i] 
+
+			for cls in train_classes_counts:
+				train_set_list[classes_list.index(cls)] = train_classes_counts[cls]
+
+			for cls in test_classes_counts:
+				test_set_list[classes_list.index(cls)] = test_classes_counts[cls]
+
+			data = {
+				'classes' : classes_list,
+				'train_set': train_set_list,
+				'test_set' : test_set_list
+			}
+			
+			writer.writerow(data)
+		# change made
+
 
 		train_data = datasets.ImageFolder(self.TRAIN_DIR, transform=self.train_transforms)
 		test_data = datasets.ImageFolder(self.TEST_DIR, transform=self.test_transforms)
